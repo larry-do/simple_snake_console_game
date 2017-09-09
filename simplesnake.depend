@@ -1,0 +1,20 @@
+# depslib dependency file v1.0
+1504934013 source:c:\users\dou ding nyat\desktop\simplesnake\main.cpp
+	<iostream>
+	<string>
+	<conio.h>
+	<windows.h>
+	"util.h"
+	"class.h"
+
+1504945820 c:\users\dou ding nyat\desktop\simplesnake\util.h
+	"windows.h"
+
+1504934060 c:\users\dou ding nyat\desktop\simplesnake\class.h
+	<vector>
+	<string>
+	<conio.h>
+	<cctype>
+	<stdio.h>
+	<ctime>
+
