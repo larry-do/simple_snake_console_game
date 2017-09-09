@@ -16,7 +16,7 @@ int main(){
     std::cout<<"Score: "<<score;
 	while(true){
         showArea();//hiển thị khung
-		a.controlAndMove();//điểu khiển snake
+        a.controlAndMove();//điểu khiển snake
 		if(handleEvent(a,b)){//xử lý event
             b.init(5,219);
             score++;
@@ -28,5 +28,6 @@ int main(){
 		b.showToBuffer();//nạp fruit vào buffer
 		showBuffer();//hiển thị buffer
 	}
+	Sleep(2000);
 	return 1;
 }

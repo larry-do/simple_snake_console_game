@@ -4,6 +4,7 @@
 #include<cctype>
 #include<stdio.h>
 #include<ctime>
+#include<windows.h>
 #define CONSOLE_HEIGHT 30
 #define CONSOLE_WIDTH 120
 #define RIGHT_EDGE 39
@@ -98,7 +99,7 @@ class snake {
 		~snake();
 		void showToBuffer();
 		void controlAndMove();
-		friend bool handleEvent(snake a,fruit b);//hàm friend này kết nối snake với fruit, dùng để biết khi nào ăn được fruit
+		friend bool handleEvent(snake &a,fruit &b);//hàm friend này kết nối snake với fruit, dùng để biết khi nào ăn được fruit
 };
 snake::snake(int _x,int _y,int _length,int _speed,statusEnum _status){
 	if(_x>=LEFT_EDGE&&_x<=RIGHT_EDGE) x=_x;
@@ -106,7 +107,7 @@ snake::snake(int _x,int _y,int _length,int _speed,statusEnum _status){
 	if(_speed>0) speed=_speed;
 	status=_status;
 	if(_length>2){//khởi tạo snake với độ dài length
-		snakeDot a(x,y,8,219);
+		snakeDot a(x,y,9,219);
 		body.push_back(a);
 		for(int i=1;i<=_length;i++){
 			snakeDot a(x-i,y,2,219);
@@ -117,6 +118,9 @@ snake::snake(int _x,int _y,int _length,int _speed,statusEnum _status){
 snake::~snake(){
 }
 void snake::controlAndMove(){
+    for(int i=body.size()-1;i>0;i--){
+		body[i].setPos(body[i-1].X(),body[i-1].Y());
+	}
 	if(status==UP){
 		body[0].setPos(x,--y);
 	}
@@ -129,16 +133,10 @@ void snake::controlAndMove(){
 	if(status==RIGHT){
 		body[0].setPos(++x,y);
 	}
-	for(int i=body.size()-1;i>0;i--){
-		body[i].setPos(body[i-1].X(),body[i-1].Y());
-	}
-	if(kbhit()){
-		char key=getch();
-		if('W'==toupper(key)) status=UP;
-		if('S'==toupper(key)) status=DOWN;
-		if('D'==toupper(key)) status=RIGHT;
-		if('A'==toupper(key)) status=LEFT;
-	}
+	if(GetAsyncKeyState(VK_UP)&&status!=DOWN) status=UP;
+	if(GetAsyncKeyState(VK_DOWN)&&status!=UP) status=DOWN;
+	if(GetAsyncKeyState(VK_LEFT)&&status!=RIGHT) status=LEFT;
+	if(GetAsyncKeyState(VK_RIGHT)&&status!=LEFT) status=RIGHT;
 }
 void snake::showToBuffer(){
 	for(int i=0;i<body.size();i++){
@@ -156,7 +154,7 @@ public:
     void showToBuffer();
     int X();
     int Y();
-    friend bool handleEvent(snake a, fruit b);
+    friend bool handleEvent(snake &a, fruit &b);
 };
 void fruit::init(int _color,char _character){
     x=1+rand()%(RIGHT_EDGE-1);//hàm random
@@ -173,13 +171,24 @@ int fruit::Y(){
 void fruit::showToBuffer(){
     assignBuffer(x,y,color,character);
 }
-bool handleEvent(snake a, fruit b){
+bool handleEvent(snake &a, fruit &b){
     if(a.x<=LEFT_EDGE||a.x>=RIGHT_EDGE||a.y<=TOP_EDGE||a.y>=BOTTOM_EDGE){
         SetColor(9);
         std::cout<<"You Lose";
+        Sleep(2000);
         exit (EXIT_FAILURE);//thoat chương trình
     }
+    for(int i=1;i<a.body.size();i++){
+        if(a.body[0].X()==a.body[i].X()&&a.body[0].Y()==a.body[i].Y()){
+            SetColor(9);
+            std::cout<<"You Lose";
+            Sleep(2000);
+            exit (EXIT_FAILURE);//thoat chương trình
+        }
+    }
     if(a.x==b.x&&a.y==b.y){
+        snakeDot c(0,0,2,219);
+        a.body.push_back(c);
         return true;
     }
     return false;
